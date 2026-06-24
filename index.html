@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Bio Generator – TechPatraa</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: linear-gradient(135deg, #141e30, #243b55);
+    --card: rgba(255,255,255,0.06);
+    --card-border: rgba(255,255,255,0.1);
+    --green: #1D9E75;
+    --green-light: #25c48f;
+    --green-dark: #0F6E56;
+    --text: #f0f0f0;
+    --muted: #9aa5b4;
+    --accent: rgba(29,158,117,0.15);
+    --radius: 14px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+    padding: 20px 16px 60px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: var(--accent);
+    border: 1px solid var(--green-dark);
+    color: var(--green-light);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 700;
+    background: linear-gradient(90deg, #fff 40%, var(--green-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* AD TOP */
+  .ad-top {
+    max-width: 360px;
+    margin: 0 auto 20px;
+    text-align: center;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 5px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active {
+    background: var(--green);
+    color: #fff;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-light);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* TEMPLATE SECTION */
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+  .template-chip {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .template-chip:hover, .template-chip.selected {
+    border-color: var(--green);
+    color: var(--green-light);
+    background: var(--accent);
+  }
+  .template-chip .chip-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+
+  /* FORM */
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border 0.2s;
+    resize: none;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--green);
+  }
+  select option { background: #1a2a3a; }
+
+  .form-row { margin-bottom: 12px; }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media(max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* EMOJI PICKER */
+  .emoji-section { margin-bottom: 12px; }
+  .emoji-cats {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .emoji-cat-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .emoji-cat-btn.active {
+    border-color: var(--green);
+    color: var(--green-light);
+    background: var(--accent);
+  }
+  .emoji-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 100px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--green-dark) transparent;
+  }
+  .emoji-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .emoji-btn:hover { background: var(--accent); }
+
+  /* FONT STYLES */
+  .font-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    max-height: 160px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--green-dark) transparent;
+  }
+  .font-chip {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .font-chip:hover, .font-chip.selected {
+    border-color: var(--green);
+    background: var(--accent);
+  }
+
+  /* GENERATE BTN */
+  .btn-generate {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); }
+
+  /* OUTPUT */
+  .output-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 100px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text);
+    position: relative;
+  }
+  .output-placeholder {
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .output-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .char-count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .char-count span { color: var(--green-light); font-weight: 600; }
+  .char-count.over span { color: #ff6b6b; }
+
+  .output-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-action {
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: 1px solid var(--green-dark);
+    background: transparent;
+    color: var(--green-light);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-action:hover { background: var(--accent); }
+  .btn-action.primary {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .btn-action.primary:hover { background: var(--green-light); }
+
+  /* VARIANTS */
+  .variants-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .variant-card {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .variant-card:hover { border-color: var(--green); }
+  .variant-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--green-light);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .variant-text {
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+  .variant-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--card-border);
+    background: rgba(0,0,0,0.3);
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .variant-card:hover .variant-copy { opacity: 1; }
+
+  /* LINE BREAK TOOL */
+  .linebreak-note {
+    background: rgba(29,158,117,0.08);
+    border: 1px solid rgba(29,158,117,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .linebreak-note strong { color: var(--green-light); }
+
+  /* SYMBOLS */
+  .symbol-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+  .symbol-btn {
+    padding: 4px 8px;
+    border: 1px solid var(--card-border);
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .symbol-btn:hover { background: var(--accent); border-color: var(--green); }
+
+  /* FAQ */
+  .faq-item {
+    border-bottom: 1px solid var(--card-border);
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    gap: 10px;
+    transition: color 0.2s;
+  }
+  .faq-q:hover { color: var(--green-light); }
+  .faq-arrow {
+    font-size: 11px;
+    color: var(--muted);
+    transition: transform 0.25s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .faq-a {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+    padding: 0 4px;
+  }
+  .faq-a.open {
+    max-height: 200px;
+    padding: 0 4px 13px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* AD BOTTOM */
+  .ad-bottom {
+    max-width: 700px;
+    margin: 24px auto 0;
+    text-align: center;
+  }
+
+  .section-hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- TOP AD -->
+<div class="ad-top">
+  <script type="text/javascript">
+    atOptions = { 'key': '40481fbfeb3ccbe3f4d81eba78ba36e8', 'format': 'iframe', 'height': 50, 'width': 320, 'params': {} };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/40481fbfeb3ccbe3f4d81eba78ba36e8/invoke.js"></script>
+</div>
+
+<div class="header">
+  <div class="badge">✨ Free Tool</div>
+  <h1>Instagram Bio Generator</h1>
+  <p>Apna perfect Instagram bio banao — fonts, emojis aur symbols ke saath</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('generator')">🎨 Bio Generator</button>
+  <button class="tab-btn" onclick="switchTab('fonts')">𝓕𝓸𝓷𝓽𝓼</button>
+  <button class="tab-btn" onclick="switchTab('emojis')">😎 Emojis</button>
+  <button class="tab-btn" onclick="switchTab('linebreak')">↵ Line Break Fix</button>
+</div>
+
+<div class="main">
+
+  <!-- ===== TAB 1: GENERATOR ===== -->
+  <div id="tab-generator">
+
+    <!-- Templates -->
+    <div class="card">
+      <div class="card-title">📋 Bio Style Chuno</div>
+      <div class="template-grid">
+        <div class="template-chip selected" onclick="selectTemplate(this,'blogger')">
+          <span class="chip-icon">✍️</span>Blogger
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'gamer')">
+          <span class="chip-icon">🎮</span>Gamer
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'artist')">
+          <span class="chip-icon">🎨</span>Artist
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'business')">
+          <span class="chip-icon">💼</span>Business
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'fitness')">
+          <span class="chip-icon">💪</span>Fitness
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'foodie')">
+          <span class="chip-icon">🍕</span>Foodie
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'traveler')">
+          <span class="chip-icon">✈️</span>Traveler
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'student')">
+          <span class="chip-icon">📚</span>Student
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'photographer')">
+          <span class="chip-icon">📸</span>Photographer
+        </div>
+        <div class="template-chip" onclick="selectTemplate(this,'motivational')">
+          <span class="chip-icon">🔥</span>Motivational
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <div class="card">
+      <div class="card-title">📝 Apni Details Bharo</div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Tumhara Naam / Tagline</label>
+          <input type="text" id="inp-name" placeholder="e.g. Rahul | Tech Lover">
+        </div>
+        <div class="form-row">
+          <label>Kya Karte Ho (Profession)</label>
+          <input type="text" id="inp-profession" placeholder="e.g. Blogger, Developer">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Interests / Hobbies (comma se alag karo)</label>
+        <input type="text" id="inp-interests" placeholder="e.g. Tech, Gaming, Travel, Music">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Location (optional)</label>
+          <input type="text" id="inp-location" placeholder="e.g. Delhi 🇮🇳">
+        </div>
+        <div class="form-row">
+          <label>Website / Link (optional)</label>
+          <input type="text" id="inp-link" placeholder="e.g. techpatraa.com">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Call to Action (optional)</label>
+        <input type="text" id="inp-cta" placeholder="e.g. DM for collab | Subscribe karo">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Tone / Vibe</label>
+          <select id="inp-tone">
+            <option value="cool">😎 Cool & Casual</option>
+            <option value="professional">💼 Professional</option>
+            <option value="funny">😂 Funny & Witty</option>
+            <option value="aesthetic">🌸 Aesthetic</option>
+            <option value="motivational">🔥 Motivational</option>
+            <option value="hindi">🇮🇳 Hindi Mix</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Language</label>
+          <select id="inp-lang">
+            <option value="english">English</option>
+            <option value="hinglish">Hinglish</option>
+            <option value="hindi">Hindi</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-generate" onclick="generateBio()">⚡ Bio Generate Karo</button>
+    </div>
+
+    <!-- Output -->
+    <div class="card" id="output-section" style="display:none">
+      <div class="card-title">✅ Tumhari Instagram Bio</div>
+
+      <div class="variants-grid" id="variants-container"></div>
+
+      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-action" onclick="generateBio()">🔄 Dobara Generate Karo</button>
+        <button class="btn-action" onclick="customizeActive()">✏️ Edit Karo</button>
+      </div>
+    </div>
+
+    <!-- Custom Edit -->
+    <div class="card" id="edit-section" style="display:none">
+      <div class="card-title">✏️ Bio Edit Karo</div>
+      <textarea id="edit-textarea" rows="6" placeholder="Yahan apni bio likhо ya edit karo..."></textarea>
+      <div class="output-meta">
+        <div class="char-count" id="edit-charcount"><span>0</span> / 150 characters</div>
+        <div class="output-actions">
+          <button class="btn-action primary" onclick="copyEdit()">📋 Copy Karo</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== TAB 2: FONTS ===== -->
+  <div id="tab-fonts" class="section-hidden">
+    <div class="card">
+      <div class="card-title">𝓕𝓪𝓷𝓬𝔂 𝓕𝓸𝓷𝓽𝓼 — Text Likho, Style Copy Karo</div>
+      <div class="form-row">
+        <label>Apna Text Likho</label>
+        <input type="text" id="font-input" placeholder="e.g. Your Name" oninput="updateFonts()" maxlength="30">
+      </div>
+      <div class="font-grid" id="font-grid"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: EMOJIS ===== -->
+  <div id="tab-emojis" class="section-hidden">
+    <div class="card">
+      <div class="card-title">😎 Emojis & Symbols</div>
+
+      <!-- Emojis -->
+      <div class="emoji-section">
+        <label style="margin-bottom:8px">Emojis</label>
+        <div class="emoji-cats" id="emoji-cats"></div>
+        <div class="emoji-grid" id="emoji-grid"></div>
+      </div>
+
+      <hr style="border-color: var(--card-border); margin: 14px 0;">
+
+      <!-- Symbols -->
+      <div>
+        <label style="margin-bottom:8px">✨ Special Symbols</label>
+        <div class="symbol-grid" id="symbol-grid"></div>
+      </div>
+
+      <hr style="border-color: var(--card-border); margin: 14px 0;">
+
+      <!-- Collected -->
+      <div>
+        <label style="margin-bottom:8px">📋 Selected (click karke copy karo)</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div id="collected" style="font-size:20px; min-height:36px; flex:1; background:rgba(0,0,0,0.2); border-radius:8px; padding:6px 10px; letter-spacing:3px;"></div>
+          <button class="btn-action primary" onclick="copyCollected()">Copy</button>
+          <button class="btn-action" onclick="clearCollected()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: LINE BREAK ===== -->
+  <div id="tab-linebreak" class="section-hidden">
+    <div class="card">
+      <div class="card-title">↵ Instagram Line Break Fix</div>
+      <div class="linebreak-note">
+        <strong>⚠️ Tip:</strong> Instagram caption mein line breaks delete ho jaate hain. Yeh tool special invisible character use karta hai jo line breaks ko preserve karta hai. Paste karo aur copy karo!
+      </div>
+      <div class="form-row">
+        <label>Apni Bio / Caption Likho (Enter se new line)</label>
+        <textarea id="lb-input" rows="6" placeholder="Line 1&#10;Line 2&#10;Line 3&#10;&#10;👇 Aisa dikhega Instagram par"></textarea>
+      </div>
+      <button class="btn-generate" onclick="fixLineBreak()">🔧 Line Break Fix Karo</button>
+      <div style="margin-top:14px" id="lb-output-wrap" style="display:none">
+        <label style="margin-bottom:8px">✅ Fixed Bio (Copy Karo → Paste in Instagram)</label>
+        <div class="output-box" id="lb-output"></div>
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button class="btn-action primary" onclick="copyLineBreak()">📋 Copy Karo</button>
+          <button class="btn-action" onclick="document.getElementById('lb-input').value=''; document.getElementById('lb-output-wrap').style.display='none'">🗑️ Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- FAQ SECTION -->
+<div class="main" style="margin-top: 28px;">
+  <div class="card">
+    <div class="card-title">❓ Frequently Asked Questions (FAQ)</div>
+    <div id="faq-list"></div>
+  </div>
+</div>
+
+<!-- BOTTOM AD -->
+<div class="ad-bottom">
+  <script type="text/javascript">
+    atOptions = { 'key': '40481fbfeb3ccbe3f4d81eba78ba36e8', 'format': 'iframe', 'height': 50, 'width': 320, 'params': {} };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/40481fbfeb3ccbe3f4d81eba78ba36e8/invoke.js"></script>
+</div>
+
+<!-- EFFECTIVECPM AD -->
+<div id="d6326e2bc11513c8d9ebfbc2f5913f5f"></div>
+<script type="text/javascript" src="//effectivecpmnetwork.com/d6326e2bc11513c8d9ebfbc2f5913f5f/invoke.js"></script>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== DATA ====================
+
+const EMOJI_CATS = {
+  '😊 Faces': ['😀','😎','🥰','😍','🤩','😂','🤣','😭','😤','🥳','😏','😇','🤓','😈','👻','🤖','💀','🙈'],
+  '❤️ Hearts': ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💕','💞','💓','💗','💖','💘','💝','🫀'],
+  '🌟 Stars': ['⭐','🌟','✨','💫','🌠','🌌','☄️','🔥','⚡','💥','🎇','🎆','🌈','🌊','🌀'],
+  '🎮 Lifestyle': ['🎮','🎧','🎵','🎶','📸','🎨','✍️','📚','💻','🚀','⚽','🏆','🎯','🎲','🃏'],
+  '🌍 Travel': ['✈️','🚀','🌍','🌏','🏔️','🏝️','🗺️','🧳','🌅','🌄','🏙️','🗼','🗽','🌉','🌃'],
+  '💪 Motivate': ['💪','🔥','⚡','🎯','🏆','👑','💎','🚀','✅','💯','🙌','👏','🤜','🤛','💡'],
+  '🍕 Food': ['🍕','🍔','🍜','🍣','🧁','🍰','🍦','☕','🧃','🍺','🥗','🍱','🌮','🥑','🍇'],
+  '🌸 Aesthetic': ['🌸','🌺','🌹','🍀','🌿','🍃','🌙','⚡','🦋','🐝','🦄','🌊','🍄','🌾','🌵'],
+};
+
+const SYMBOLS = ['★','☆','✦','✧','✩','✪','✫','✬','✭','✮','✯','♡','♥','♢','♦','♠','♣','☺','☻','◈','◉','◊','○','●','◎','◇','◆','□','■','△','▲','▽','▼','✔','✘','✿','❀','❁','❃','❋','→','←','↑','↓','↔','↕','⇒','⇔','•','·','∞','©','®','™','✌','☮','❄','☃','♻'];
+
+const FONT_STYLES = [
+  { name: '𝐁𝐨𝐥𝐝', fn: boldText },
+  { name: '𝘐𝘵𝘢𝘭𝘪𝘤', fn: italicText },
+  { name: '𝓢𝓬𝓻𝓲𝓹𝓽', fn: scriptText },
+  { name: '𝔊𝔬𝔱𝔥𝔦𝔠', fn: gothicText },
+  { name: 'Ⓑⓤⓑⓑⓛⓔ', fn: bubbleText },
+  { name: '🆂🆀🆄🅰🆁🅴', fn: squareText },
+  { name: 'S̲t̲r̲i̲k̲e̲', fn: underlineText },
+  { name: 'S̶t̶r̶i̶k̶e̶', fn: strikeText },
+  { name: 'ᴛɪɴʏ ᴄᴀᴘꜱ', fn: smallCapsText },
+  { name: 'ʍıɹɹoɹ', fn: mirrorText },
+  { name: 'F̾l̾i̾c̾k̾e̾r̾', fn: flickerText },
+  { name: 'Ｗｉｄｅ', fn: wideText },
+];
+
+const TEMPLATES = {
+  blogger: {
+    cool: `✍️ {name}\n📝 {profession}\n💡 {interests}\n📍 {location}\n🔗 {link}\n👇 {cta}`,
+    hindi: `✍️ {name}\n📝 {profession} हूँ मैं\n💡 {interests} पसंद है\n📍 {location}\n👇 {cta}`,
+  },
+  gamer: {
+    cool: `🎮 {name}\n⚡ {profession}\n🕹️ {interests}\n🏆 GG WP always\n📍 {location}\n🔗 {link}`,
+    funny: `🎮 {name} | Lag Problem Specialist\n💀 {profession}\n🕹️ {interests}\n😤 Toxic? Nope. Competitive? Always.\n{cta}`,
+  },
+  artist: {
+    cool: `🎨 {name}\n✨ {profession}\n🖌️ {interests}\n🌈 Creating magic daily\n📍 {location}\n🔗 {link}`,
+    aesthetic: `🌸 {name}\n✨ {profession}\n💫 {interests}\n🎨 Art is my language\n🔗 {link}`,
+  },
+  business: {
+    professional: `💼 {name}\n📈 {profession}\n🎯 {interests}\n📍 {location}\n📧 DM for business\n🔗 {link}`,
+    cool: `💼 {name} | {profession}\n🚀 {interests}\n💡 Building something big\n📍 {location} | 🔗 {link}`,
+  },
+  fitness: {
+    motivational: `💪 {name}\n🏋️ {profession}\n🔥 {interests}\n⚡ No pain, no gain\n📍 {location}\n👇 {cta}`,
+    cool: `💪 {name} | {profession}\n🥗 {interests}\n🏆 Consistency is key\n📍 {location} | {link}`,
+  },
+  foodie: {
+    funny: `🍕 {name} | Food Lover\n😋 {profession}\n🌮 {interests}\n☕ Coffee first, everything later\n📍 {location}`,
+    cool: `🍽️ {name}\n👨‍🍳 {profession}\n🌶️ {interests}\n📍 {location} | 📸 Food Diaries\n🔗 {link}`,
+  },
+  traveler: {
+    cool: `✈️ {name}\n🌍 {profession}\n🗺️ {interests}\n🏔️ Collecting memories, not things\n📍 Currently: {location}\n🔗 {link}`,
+    aesthetic: `🌅 {name} | Wanderer\n✈️ {interests}\n🌙 Find me exploring {location}\n📸 {link}`,
+  },
+  student: {
+    funny: `📚 {name} | {profession}\n😅 {interests}\n☕ Chai + Studies = Life\n📍 {location}\n💡 {cta}`,
+    hindi: `📚 {name}\n🎓 {profession}\n✏️ {interests} | पढ़ाई चल रही है\n📍 {location}`,
+  },
+  photographer: {
+    aesthetic: `📸 {name}\n🌅 {profession}\n🎞️ {interests}\n✨ Capturing moments forever\n📍 {location}\n🔗 {link}`,
+    cool: `📸 {name} | {profession}\n🌈 {interests}\n📍 {location} | DM for shoots\n🔗 {link}`,
+  },
+  motivational: {
+    motivational: `🔥 {name}\n💡 {profession}\n⚡ {interests}\n💪 Dream Big. Work Hard. Stay Humble.\n🚀 {cta}\n🔗 {link}`,
+    hindi: `🔥 {name}\n💡 {profession}\n⚡ {interests}\n🌟 मेहनत कभी झूठ नहीं बोलती\n👇 {cta}`,
+  }
+};
+
+// State
+let selectedTemplate = 'blogger';
+let selectedTone = 'cool';
+let collectedEmojis = '';
+let currentEmojyCat = '😊 Faces';
+let selectedFont = null;
+let activeBioText = '';
+
+// ==================== TABS ====================
+function switchTab(tab) {
+  ['generator','fonts','emojis','linebreak'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('section-hidden', t !== tab);
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['generator','fonts','emojis','linebreak'][i] === tab);
+  });
+  if (tab === 'fonts') updateFonts();
+  if (tab === 'emojis') initEmojis();
+}
+
+// ==================== TEMPLATES ====================
+function selectTemplate(el, tpl) {
+  document.querySelectorAll('.template-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTemplate = tpl;
+}
+
+// ==================== GENERATE ====================
+function generateBio() {
+  const name = document.getElementById('inp-name').value.trim() || 'Your Name';
+  const profession = document.getElementById('inp-profession').value.trim() || 'Creator';
+  const interests = document.getElementById('inp-interests').value.trim() || 'Tech, Life';
+  const location = document.getElementById('inp-location').value.trim() || 'India 🇮🇳';
+  const link = document.getElementById('inp-link').value.trim() || 'yourlink.com';
+  const cta = document.getElementById('inp-cta').value.trim() || 'Follow for more';
+  const tone = document.getElementById('inp-tone').value;
+  const lang = document.getElementById('inp-lang').value;
+
+  const fill = (tpl) => tpl
+    .replace(/{name}/g, name)
+    .replace(/{profession}/g, profession)
+    .replace(/{interests}/g, interests)
+    .replace(/{location}/g, location)
+    .replace(/{link}/g, link)
+    .replace(/{cta}/g, cta);
+
+  // Get templates for this type
+  const tplSet = TEMPLATES[selectedTemplate] || TEMPLATES['blogger'];
+  const keys = Object.keys(tplSet);
+
+  // Generate 3 variants
+  const variants = [];
+  
+  // Variant 1: tone-matched
+  const toneKey = keys.find(k => k === tone) || keys[0];
+  variants.push({ label: '✨ Style 1', text: fill(tplSet[toneKey]) });
+
+  // Variant 2: another key
+  const key2 = keys.find(k => k !== toneKey) || keys[0];
+  variants.push({ label: '🎨 Style 2', text: fill(tplSet[key2]) });
+
+  // Variant 3: custom remix
+  const remix = buildRemix(name, profession, interests, location, link, cta, tone, lang);
+  variants.push({ label: '🔥 Style 3 (Remix)', text: remix });
+
+  // Show
+  const container = document.getElementById('variants-container');
+  container.innerHTML = '';
+  variants.forEach((v, i) => {
+    const charLen = v.text.replace(/\n/g, ' ').length;
+    container.innerHTML += `
+      <div class="variant-card" onclick="selectVariant(this, ${i})">
+        <div class="variant-label">${v.label} · ${charLen} chars</div>
+        <div class="variant-text" id="vt-${i}">${escHtml(v.text)}</div>
+        <button class="variant-copy" onclick="event.stopPropagation(); copyVariant(${i})">📋 Copy</button>
+      </div>
+    `;
+  });
+  window._variants = variants;
+  activeBioText = variants[0].text;
+
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function buildRemix(name, profession, interests, location, link, cta, tone, lang) {
+  const intArr = interests.split(',').map(s => s.trim()).slice(0, 3);
+  const interestLine = intArr.map(i => `• ${i}`).join('\n');
+
+  if (lang === 'hindi') {
+    return `🌟 ${name}\n💡 ${profession} | क्रिएटर\n${interestLine}\n📍 ${location}\n👇 ${cta}`;
+  } else if (lang === 'hinglish') {
+    return `⚡ ${name} | ${profession}\n${interestLine}\n📍 ${location} mein hoon\n🔗 ${link}\n💬 ${cta}`;
+  }
+
+  const toneLines = {
+    cool: `😎 Just vibing & creating`,
+    professional: `🎯 Delivering results, every time`,
+    funny: `😂 Trying to adult... failing spectacularly`,
+    aesthetic: `🌸 Making the world beautiful, one post at a time`,
+    motivational: `🔥 Every day is a new chance to grind`,
+    hindi: `🇮🇳 Desi by heart, global by mind`,
+  };
+  return `${name} | ${profession}\n${interestLine}\n${toneLines[tone] || '✨ Living the dream'}\n📍 ${location}\n🔗 ${link}`;
+}
+
+function selectVariant(el, idx) {
+  document.querySelectorAll('.variant-card').forEach(c => c.style.borderColor = '');
+  el.style.borderColor = 'var(--green)';
+  activeBioText = window._variants[idx].text;
+
+  // update edit textarea
+  document.getElementById('edit-textarea').value = activeBioText;
+  updateEditCount();
+}
+
+function copyVariant(idx) {
+  copyText(window._variants[idx].text);
+}
+
+function customizeActive() {
+  document.getElementById('edit-textarea').value = activeBioText;
+  updateEditCount();
+  const sec = document.getElementById('edit-section');
+  sec.style.display = 'block';
+  sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyEdit() {
+  copyText(document.getElementById('edit-textarea').value);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('edit-textarea').addEventListener('input', updateEditCount);
+});
+
+function updateEditCount() {
+  const val = document.getElementById('edit-textarea').value;
+  const len = val.length;
+  const el = document.getElementById('edit-charcount');
+  el.innerHTML = `<span>${len}</span> / 150 characters`;
+  el.className = 'char-count' + (len > 150 ? ' over' : '');
+}
+
+// ==================== FONTS ====================
+function updateFonts() {
+  const input = document.getElementById('font-input').value || 'Your Text';
+  const grid = document.getElementById('font-grid');
+  grid.innerHTML = FONT_STYLES.map((fs, i) => `
+    <div class="font-chip" onclick="copyText('${escJs(fs.fn(input))}')">
+      ${fs.fn(input)}
+      <div style="font-size:10px; color:var(--muted); margin-top:2px">${fs.name.replace(/[^\w ]/g,'').trim() || 'Style'}</div>
+    </div>
+  `).join('');
+}
+
+// Font converters
+const A='A'.charCodeAt(0), a='a'.charCodeAt(0);
+function boldText(t){return t.replace(/[A-Za-z]/g,c=>{const n=c.charCodeAt(0);return n>=65&&n<=90?String.fromCodePoint(0x1D400+n-65):String.fromCodePoint(0x1D41A+n-97);})}
+function italicText(t){return t.replace(/[A-Za-z]/g,c=>{const n=c.charCodeAt(0);return n>=65&&n<=90?String.fromCodePoint(0x1D434+n-65):String.fromCodePoint(0x1D44E+n-97);})}
+function scriptText(t){return t.replace(/[A-Za-z]/g,c=>{const n=c.charCodeAt(0);return n>=65&&n<=90?String.fromCodePoint(0x1D4D0+n-65):String.fromCodePoint(0x1D4EA+n-97);})}
+function gothicText(t){return t.replace(/[A-Za-z]/g,c=>{const n=c.charCodeAt(0);return n>=65&&n<=90?String.fromCodePoint(0x1D504+n-65):String.fromCodePoint(0x1D51E+n-97);})}
+function bubbleText(t){return t.replace(/[A-Za-z0-9]/g,c=>{const n=c.charCodeAt(0);if(n>=65&&n<=90)return String.fromCodePoint(0x24B6+n-65);if(n>=97&&n<=122)return String.fromCodePoint(0x24D0+n-97);return c;})}
+function squareText(t){return t.replace(/[A-Za-z]/g,c=>{const n=c.charCodeAt(0);return n>=65&&n<=90?String.fromCodePoint(0x1F130+n-65):String.fromCodePoint(0x1F130+n-97);})}
+function underlineText(t){return t.split('').map(c=>c+'\u0332').join('')}
+function strikeText(t){return t.split('').map(c=>c+'\u0336').join('')}
+function smallCapsText(t){const m={a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'q',r:'ʀ',s:'ꜱ',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'};return t.split('').map(c=>m[c.toLowerCase()]||c).join('')}
+function mirrorText(t){const m={a:'ɐ',b:'q',c:'ɔ',d:'p',e:'ǝ',f:'ɟ',g:'ƃ',h:'ɥ',i:'ı',j:'ɾ',k:'ʞ',l:'l',m:'ɯ',n:'u',o:'o',p:'d',q:'b',r:'ɹ',s:'s',t:'ʇ',u:'n',v:'ʌ',w:'ʍ',x:'x',y:'ʎ',z:'z'};return t.split('').reverse().map(c=>m[c.toLowerCase()]||(c>='A'&&c<='Z'?m[c.toLowerCase()]?.toUpperCase()||c:c)).join('')}
+function flickerText(t){return t.split('').map(c=>c+'\u0336\u0308').join('')}
+function wideText(t){return t.split('').map(c=>{const n=c.charCodeAt(0);return n>=33&&n<=126?String.fromCodePoint(0xFF01+n-33):c}).join('')}
+
+// ==================== EMOJIS ====================
+function initEmojis() {
+  const catsEl = document.getElementById('emoji-cats');
+  if (catsEl.innerHTML) return; // already init
+
+  catsEl.innerHTML = Object.keys(EMOJI_CATS).map(cat => `
+    <button class="emoji-cat-btn ${cat===currentEmojyCat?'active':''}" onclick="loadEmojiCat('${escJs(cat)}')">${cat}</button>
+  `).join('');
+
+  loadEmojiCat(currentEmojyCat);
+
+  const symGrid = document.getElementById('symbol-grid');
+  symGrid.innerHTML = SYMBOLS.map(s => `<button class="symbol-btn" onclick="addToCollected('${escJs(s)}')" title="Click to add">${s}</button>`).join('');
+}
+
+function loadEmojiCat(cat) {
+  currentEmojyCat = cat;
+  document.querySelectorAll('.emoji-cat-btn').forEach(b => b.classList.toggle('active', b.textContent.trim()===cat));
+  const emojis = EMOJI_CATS[cat] || [];
+  document.getElementById('emoji-grid').innerHTML = emojis.map(e =>
+    `<button class="emoji-btn" onclick="addToCollected('${e}')">${e}</button>`
+  ).join('');
+}
+
+function addToCollected(e) {
+  collectedEmojis += e;
+  document.getElementById('collected').textContent = collectedEmojis;
+}
+function copyCollected() { copyText(collectedEmojis); }
+function clearCollected() { collectedEmojis = ''; document.getElementById('collected').textContent = ''; }
+
+// ==================== LINE BREAK ====================
+function fixLineBreak() {
+  const input = document.getElementById('lb-input').value;
+  if (!input.trim()) { showToast('Kuch likho pehle!'); return; }
+  // Instagram line break trick: use zero-width chars
+  const fixed = input.split('\n').join('\n.\n').replace(/\n\.\n\n/g, '\n.\n\n.');
+  document.getElementById('lb-output').textContent = input; // show as-is, the break is preserved
+  document.getElementById('lb-output-wrap').style.display = 'block';
+  activeBioText = input;
+}
+
+function copyLineBreak() {
+  const input = document.getElementById('lb-input').value;
+  const lines = input.split('\n');
+  // Join with invisible character trick
+  const result = lines.join('\n\u200B\n');
+  copyText(result);
+}
+
+// ==================== UTILS ====================
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('✅ Copy ho gaya!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); showToast('✅ Copy ho gaya!');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+function escJs(str) {
+  return str.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+}
+
+// Init
+updateFonts();
+
+// ==================== FAQ ====================
+const FAQS = [
+  {
+    q: "What is the Instagram Bio Generator?",
+    a: "It is a free online tool that helps you create the perfect Instagram bio in seconds. Just enter your name, profession, and interests — the tool instantly generates 3 different bio styles for you."
+  },
+  {
+    q: "Is this tool completely free to use?",
+    a: "Yes, this tool is 100% free. No signup, login, or payment is required. Simply use it and copy your bio!"
+  },
+  {
+    q: "How many characters are allowed in an Instagram bio?",
+    a: "Instagram allows a maximum of 150 characters in the bio. Our tool shows a live character count so you always stay within the limit."
+  },
+  {
+    q: "Do fancy fonts work on Instagram?",
+    a: "Yes! These are special Unicode characters that display perfectly on Instagram. Just copy the styled text and paste it directly into your bio or caption."
+  },
+  {
+    q: "Why do line breaks disappear on Instagram?",
+    a: "Instagram automatically removes extra line breaks. Use our Line Break Fix tab — it adds invisible special characters that preserve your line breaks when pasted on Instagram."
+  },
+  {
+    q: "Can I create a bio in Hindi or Hinglish?",
+    a: "Absolutely! The tool supports English, Hinglish, and Hindi. Simply select your preferred language from the language dropdown before generating."
+  },
+  {
+    q: "Can I edit the generated bio?",
+    a: "Yes! After generating, click the Edit button to customize the bio as per your preference, then copy it with one click."
+  },
+  {
+    q: "Which templates are available?",
+    a: "The tool offers 10 templates — Blogger, Gamer, Artist, Business, Fitness, Foodie, Traveler, Student, Photographer, and Motivational. Choose the one that best fits your profile."
+  },
+  {
+    q: "How do I use the Emoji and Symbols feature?",
+    a: "Go to the Emojis tab, select a category, and click on any emoji to collect it. Once done, click the Copy button to copy them all at once and paste into your bio."
+  },
+  {
+    q: "Does this tool work on mobile?",
+    a: "Yes, the Instagram Bio Generator is fully mobile-friendly and works smoothly on any smartphone or tablet."
+  }
+];
+
+function initFAQ() {
+  const container = document.getElementById('faq-list');
+  container.innerHTML = FAQS.map((f, i) => `
+    <div class="faq-item" id="faq-${i}">
+      <div class="faq-q" onclick="toggleFAQ(${i})">
+        <span>${f.q}</span>
+        <span class="faq-arrow" id="faq-arrow-${i}">▼</span>
+      </div>
+      <div class="faq-a" id="faq-a-${i}">${f.a}</div>
+    </div>
+  `).join('');
+}
+
+function toggleFAQ(i) {
+  const ans = document.getElementById('faq-a-' + i);
+  const arrow = document.getElementById('faq-arrow-' + i);
+  const isOpen = ans.classList.contains('open');
+  // close all
+  document.querySelectorAll('.faq-a').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.faq-arrow').forEach(el => { el.style.transform = ''; el.style.color = ''; });
+  if (!isOpen) {
+    ans.classList.add('open');
+    arrow.style.transform = 'rotate(180deg)';
+    arrow.style.color = 'var(--green-light)';
+  }
+}
+
+initFAQ();
+</script>
+</body>
+</html>
